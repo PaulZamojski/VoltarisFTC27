@@ -7,8 +7,19 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+//Rotational Position
+import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 public class DriveTrain {
+    //Technical Stuff
+    IMU imu;
+
+    //Vars
     double speed;
+
+    //Motors
     DcMotorEx fl;;
     DcMotorEx fr;
     DcMotorEx bl;
@@ -31,6 +42,14 @@ public class DriveTrain {
         br.setPower(0.0);
 
         speed=0;
+
+        IMU imu = hwMap.get(IMU.class, "imu");
+        // Adjust the orientation parameters to match your robot
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+        imu.initialize(parameters);
     }
 
     public double getSpeed(){
@@ -56,29 +75,35 @@ public class DriveTrain {
 
 
     public void move(Gamepad gamepad1){
-        double forward;
-        double sideways;
-        double turning;
-        double max;
-        double scaleFactor;
+        double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+        double x = gamepad1.left_stick_x;
+        double rx = gamepad1.right_stick_x;
 
-        forward = -(Math.atan(5 * gamepad1.left_stick_y) / Math.atan(5));
-        sideways = (Math.atan(5 * gamepad1.left_stick_x) / Math.atan(5));
-        turning = (Math.atan(5 * gamepad1.right_stick_x) / Math.atan(5));
-
-        max = Math.max(Math.abs(forward - sideways - turning), Math.max(Math.abs(forward + sideways - turning), Math.max(Math.abs(forward + sideways + turning), Math.abs(forward + turning - sideways))));
-        if (max > speed) {
-            scaleFactor = speed/max;
-        } else {
-            scaleFactor = speed;
+        // This button choice was made so that it is hard to hit on accident,
+        // it can be freely changed based on preference.
+        // The equivalent button is start on Xbox-style controllers.
+        if (gamepad1.options) {
+            imu.resetYaw();
         }
-        scaleFactor = Math.max(Math.abs(1), 0.2);
 
-        setPower(
-                (forward - sideways - turning) * scaleFactor,
-                (forward + sideways - turning) * scaleFactor,
-                (forward + sideways + turning) * scaleFactor,
-                (forward + turning - sideways) * scaleFactor);
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+        // Rotate the movement direction counter to the bot's rotation
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+        rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+        // Denominator is the largest motor power (absolute value) or 1
+        // This ensures all the powers maintain the same ratio,
+        // but only if at least one is out of the range [-1, 1]
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
+
+        setPower(frontRightPower, backRightPower, frontLeftPower, backLeftPower);
     }
 
 
