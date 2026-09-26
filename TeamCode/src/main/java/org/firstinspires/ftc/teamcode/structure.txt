@@ -1,0 +1,9 @@
+This file is for documenting the hierarchy of classes and functions, both complete and unfinished
+
+TeleOp.java (Class)
+    Robot.java (Class)
+        DriveTrain.java (Class)
+            motors init. and control
+            mecanum calculations
+
+        position tracking (rotational only so far)

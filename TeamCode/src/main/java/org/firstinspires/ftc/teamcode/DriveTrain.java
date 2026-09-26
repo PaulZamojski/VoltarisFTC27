@@ -20,12 +20,12 @@ public class DriveTrain {
     double speed;
 
     //Motors
-    DcMotorEx fl;;
+    DcMotorEx fl;
     DcMotorEx fr;
     DcMotorEx bl;
     DcMotorEx br;
 
-    public DriveTrain(HardwareMap hwMap){
+    public DriveTrain(HardwareMap hwMap, IMU imu){
         fl=hwMap.get(DcMotorEx.class,"fl");
         fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         fl.setPower(0.0);
@@ -43,13 +43,7 @@ public class DriveTrain {
 
         speed=0;
 
-        IMU imu = hwMap.get(IMU.class, "imu");
-        // Adjust the orientation parameters to match your robot
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
+        this.imu=imu;
     }
 
     public double getSpeed(){
@@ -79,9 +73,8 @@ public class DriveTrain {
         double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
 
-        // This button choice was made so that it is hard to hit on accident,
-        // it can be freely changed based on preference.
-        // The equivalent button is start on Xbox-style controllers.
+
+        // Button only on playstation, Xbox equivalent is "start" button
         if (gamepad1.options) {
             imu.resetYaw();
         }
@@ -95,8 +88,7 @@ public class DriveTrain {
         rotX = rotX * 1.1;  // Counteract imperfect strafing
 
         // Denominator is the largest motor power (absolute value) or 1
-        // This ensures all the powers maintain the same ratio,
-        // but only if at least one is out of the range [-1, 1]
+        // This ensures all the powers maintain the same ratio
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
         double frontLeftPower = (rotY + rotX + rx) / denominator;
         double backLeftPower = (rotY - rotX + rx) / denominator;
