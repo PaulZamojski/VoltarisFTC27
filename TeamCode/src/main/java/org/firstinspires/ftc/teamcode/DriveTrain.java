@@ -18,6 +18,7 @@ public class DriveTrain {
 
     //Vars
     double speed;
+    boolean parked;
 
     //Motors
     DcMotorEx fl;
@@ -42,6 +43,7 @@ public class DriveTrain {
         br.setPower(0.0);
 
         speed=0;
+        parked=true;
 
         this.imu=imu;
     }
@@ -50,16 +52,22 @@ public class DriveTrain {
         return speed;
     }
     public void setSpeed(double speed){
+        if(parked){return;}
+
         this.speed=speed;
     }
 
     public void setPower(double rf, double rb, double lf, double lb){
+        if(parked){return;}
+
         fr.setPower(rf);
         br.setPower(rb);
         bl.setPower(lb);
         fl.setPower(lf);
     }
     public void setPowerAll(double power){
+        if(parked){return;}
+
         fr.setPower(power);
         br.setPower(power);
         bl.setPower(power);
@@ -69,13 +77,14 @@ public class DriveTrain {
 
 
     public void move(Gamepad gamepad1){
-        double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+        if(parked){return;}
+
+        double y = -gamepad1.left_stick_y; //Y stick value is reversed
         double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
 
 
-        // Button only on playstation, Xbox equivalent is "start" button
-        if (gamepad1.options) {
+        if (gamepad1.start) {
             imu.resetYaw();
         }
 

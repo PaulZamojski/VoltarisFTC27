@@ -18,6 +18,12 @@ public class TeleOp extends LinearOpMode{
         //What happens after "play" pressed on CH
         while(opModeIsActive()){
             robot.driveTrain.move(gamepad1);
+
+            if(gamepad1.backWasPressed()){
+                robot.driveTrain.parked=!robot.driveTrain.parked;
+            }
+
+
         }
     }
 
