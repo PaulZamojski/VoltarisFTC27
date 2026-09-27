@@ -3,7 +3,7 @@ This file is for recording what inputs on each controller correspond to which fu
 Controller 1:
     Left Stick: Straight Movement
     Right Stick: Rotation (X-axis only)
-    
+
     D-Pad Up:
     D-Pad Down:
     D-Pad Left:
@@ -24,11 +24,11 @@ Controller 1:
 
     Start: Recalibrate Position
     Back: Park
-   
-Controller 1:
+
+Controller 2:
     Left Stick:
     Right Stick:
-    
+
     D-Pad Up:
     D-Pad Down:
     D-Pad Left:
