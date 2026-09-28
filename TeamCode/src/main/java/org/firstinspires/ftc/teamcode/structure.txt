@@ -6,4 +6,5 @@ TeleOp.java (Class)
             motors init. and control
             mecanum calculations
 
+        Shooter.java (Class)
         position tracking (rotational only so far)

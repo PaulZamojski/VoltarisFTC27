@@ -39,8 +39,8 @@ Controller 2:
     Square:
     Triangle:
 
-    Left Bumper (L1):
-    Right Bumper (R1):
+    Left Bumper (L1): Start Shooter
+    Right Bumper (R1): Stop Shooter
     Left Trigger (L2):
     Right Trigger (R2):
 

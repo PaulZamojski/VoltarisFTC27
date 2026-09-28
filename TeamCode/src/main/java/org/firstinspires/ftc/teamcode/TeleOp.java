@@ -22,7 +22,11 @@ public class TeleOp extends LinearOpMode{
             if(gamepad1.backWasPressed()){
                 robot.driveTrain.parked=!robot.driveTrain.parked;
             }
-
+            if(gamepad2.left_bumper) {
+                robot.shooter.setPower(1.0);
+            } else if (gamepad2.right_bumper) {
+                robot.shooter.setPower(0.0);
+            }
 
         }
     }
