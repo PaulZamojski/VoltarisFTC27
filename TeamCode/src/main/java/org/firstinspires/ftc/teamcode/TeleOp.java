@@ -28,6 +28,12 @@ public class TeleOp extends LinearOpMode{
                 robot.shooter.setPower(0.0);
             }
 
+            if(gamepad2.left_trigger_pressed && (robot.shooter.getPower()!=0)){
+                robot.shooter.setServoDegree(90);
+            } else if (gamepad2.right_trigger_pressed || (robot.shooter.getPower()==0)){
+                robot.shooter.setServoDegree(0);
+            }
+
         }
     }
 
