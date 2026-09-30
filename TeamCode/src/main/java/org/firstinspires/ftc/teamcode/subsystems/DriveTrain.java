@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 //Class contains all drivetrain motors and methods
 
@@ -17,7 +17,7 @@ public class DriveTrain {
 
     //Vars
     double speed;
-    boolean parked;
+    public boolean parked;
 
     //Motors
     DcMotorEx fl;
