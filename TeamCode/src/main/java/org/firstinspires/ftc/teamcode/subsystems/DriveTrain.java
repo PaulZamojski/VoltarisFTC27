@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 //Rotational Position
 import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.variables.Constants;
 
 public class DriveTrain {
     //Technical Stuff
@@ -20,26 +21,26 @@ public class DriveTrain {
     public boolean parked;
 
     //Motors
-    DcMotorEx fl;
-    DcMotorEx fr;
-    DcMotorEx bl;
-    DcMotorEx br;
+    public DcMotorEx lf;
+    public DcMotorEx rf;
+    public DcMotorEx lb;
+    public DcMotorEx rb;
 
     public DriveTrain(HardwareMap hwMap, IMU imu){
-        fl=hwMap.get(DcMotorEx.class,"fl");
-        fl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        fl.setPower(0.0);
+        lf=hwMap.get(DcMotorEx.class,"fl");
+        lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lf.setPower(0.0);
 
-        fr=hwMap.get(DcMotorEx.class,"fr");
-        fr.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rf =hwMap.get(DcMotorEx.class,"fr");
+        rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        bl=hwMap.get(DcMotorEx.class,"bl");
-        bl.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bl.setPower(0.0);
+        lb =hwMap.get(DcMotorEx.class,"bl");
+        lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lb.setPower(0.0);
 
-        br=hwMap.get(DcMotorEx.class,"br");
-        br.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        br.setPower(0.0);
+        rb =hwMap.get(DcMotorEx.class,"br");
+        rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rb.setPower(0.0);
 
         speed=0;
         parked=true;
@@ -56,21 +57,21 @@ public class DriveTrain {
         this.speed=speed;
     }
 
-    public void setPower(double rf, double rb, double lf, double lb){
+    public void setPower(double fr, double br, double fl, double bl){
         if(parked){return;}
 
-        fr.setPower(rf);
-        br.setPower(rb);
-        bl.setPower(lb);
-        fl.setPower(lf);
+        this.rf.setPower(fr);
+        this.rb.setPower(br);
+        this.lb.setPower(bl);
+        lf.setPower(fl);
     }
     public void setPowerAll(double power){
         if(parked){return;}
 
-        fr.setPower(power);
-        br.setPower(power);
-        bl.setPower(power);
-        fl.setPower(power);
+        rf.setPower(power);
+        rb.setPower(power);
+        lb.setPower(power);
+        lf.setPower(power);
     }
 
 
@@ -104,6 +105,34 @@ public class DriveTrain {
         double backRightPower = (rotY + rotX - rx) / denominator;
 
         setPower(frontRightPower, backRightPower, frontLeftPower, backLeftPower);
+    }
+
+    public void moveInches(double inches, double power, double angle){
+        rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        rf.setTargetPosition((int)(inchesToTicks(inches)));
+        lf.setTargetPosition((int)(inchesToTicks(inches)));
+        rb.setTargetPosition((int)(inchesToTicks(inches)));
+        lb.setTargetPosition((int)(inchesToTicks(inches)));
+
+        rf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        lf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        rb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        lb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        setPowerAll(power);
+
+    }
+
+    public double ticksToInches(double ticks){
+        return ticks/(Constants.TICKS_PER_REVOLUTION/Constants.WHEEL_CIRCUMFERENCE);
+    }
+
+    public double inchesToTicks(double inches){
+        return inches*(Constants.TICKS_PER_REVOLUTION/Constants.WHEEL_CIRCUMFERENCE);
     }
 
 

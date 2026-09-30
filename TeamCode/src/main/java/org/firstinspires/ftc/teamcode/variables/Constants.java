@@ -1,14 +1,19 @@
 package org.firstinspires.ftc.teamcode.variables;
 
 public class Constants {
+
+
     //Units
     public static final double MM_PER_IN=25.4;
     public static final double IN_PER_MM=(1.0/MM_PER_IN);
 
-    public static final double TICKS_PER_REVOLUTION=0.0; //TEMPORARY VALUE
+    public static final double TICKS_PER_REVOLUTION=537.7; //312 RPM (19.2:1)
 
     public static final double KG_PER_LB=0.45359237;
     public static final double LBS_PER_KG=(1.0/KG_PER_LB);
+
+    //Robot
+    public static final double WHEEL_CIRCUMFERENCE=104*IN_PER_MM*2*Math.PI;
 
     //Scoring Elements
     public static final double POLLEN_DIAMETER=2.8;
