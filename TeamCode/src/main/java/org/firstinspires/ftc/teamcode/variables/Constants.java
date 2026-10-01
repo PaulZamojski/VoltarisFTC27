@@ -14,6 +14,7 @@ public class Constants {
 
     //Robot
     public static final double WHEEL_CIRCUMFERENCE=104*IN_PER_MM*2*Math.PI;
+    public static final double WHEEL_DISTANCE_FROM_CENTER=12; // TEMPORARY Fill in.
 
     //Scoring Elements
     public static final double POLLEN_DIAMETER=2.8;

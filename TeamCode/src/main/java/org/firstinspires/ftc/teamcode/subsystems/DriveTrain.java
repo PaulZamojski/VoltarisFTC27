@@ -107,23 +107,35 @@ public class DriveTrain {
         setPower(frontRightPower, backRightPower, frontLeftPower, backLeftPower);
     }
 
-    public void moveInches(double inches, double power, double angle){
+    // Goes straight
+    public void moveVector(double inches, double movementAngle, double power, double turnAngle){
         rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        rf.setTargetPosition((int)(inchesToTicks(inches)));
-        lf.setTargetPosition((int)(inchesToTicks(inches)));
-        rb.setTargetPosition((int)(inchesToTicks(inches)));
-        lb.setTargetPosition((int)(inchesToTicks(inches)));
+        if(turnAngle>180){turnAngle=turnAngle-360;}
+        double straight=inches*Math.sin(movementAngle);
+        double strafe=inches*Math.cos(movementAngle);
+        double turnDistance=turnAngle/360.0*2*Math.PI*Constants.WHEEL_DISTANCE_FROM_CENTER;
+
+        lf.setTargetPosition((int)(inchesToTicks(straight+strafe+turnDistance)));
+        lb.setTargetPosition((int)(inchesToTicks(straight-strafe+turnDistance)));
+        rf.setTargetPosition((int)(inchesToTicks(straight-strafe-turnDistance)));
+        rb.setTargetPosition((int)(inchesToTicks(straight+strafe-turnDistance)));
+
+        double max=Math.max(Math.max(straight+strafe+turnDistance,straight-strafe+turnDistance),Math.max(straight-strafe-turnDistance, straight+strafe-turnDistance));
 
         rf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         lf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         rb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         lb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-        setPowerAll(power);
+        setPower(
+                power*(straight-strafe-turnDistance)/max,
+                power*(straight+strafe-turnDistance)/max,
+                power*(straight+strafe+turnDistance)/max,
+                power*(straight-strafe+turnDistance)/max);
 
     }
 
