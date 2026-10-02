@@ -12,7 +12,7 @@ import javax.lang.model.element.VariableElement;
 
 public class Shooter {
     DcMotorEx shootingMotor;
-    Servo shootingGate;
+    Servo shootingGate; //Assumed to be 180 degree servo
 
     public Shooter(HardwareMap hwMap){
         shootingMotor=hwMap.get(DcMotorEx.class,"shootingMotor");
@@ -31,9 +31,14 @@ public class Shooter {
     }
 
     public void setServoDegree(double degree){
-        shootingGate.setPosition(degree/1800.0);
+        shootingGate.setPosition(degree/180.0);
     }
     public double getServoDegree(){
-        return shootingGate.getPosition()*1800.0;
+        return shootingGate.getPosition()*180.0;
+    }
+
+    public void allowBalls(boolean allow){
+        if (allow){shootingGate.setPosition(0.0);}
+            else{shootingGate.setPosition(0.5);}
     }
 }

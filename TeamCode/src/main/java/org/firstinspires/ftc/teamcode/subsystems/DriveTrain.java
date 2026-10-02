@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.variables.Constants;
+import org.firstinspires.ftc.teamcode.variables.RobotVariables;
 
 public class DriveTrain {
     //Technical Stuff
@@ -117,7 +118,39 @@ public class DriveTrain {
         if(turnAngle>180){turnAngle=turnAngle-360;}
         double straight=inches*Math.sin(movementAngle);
         double strafe=inches*Math.cos(movementAngle);
-        double turnDistance=turnAngle/360.0*2*Math.PI*Constants.WHEEL_DISTANCE_FROM_CENTER;
+        double turnDistance=turnAngle/360.0*2*Math.PI*RobotVariables.WHEEL_DISTANCE_FROM_CENTER;
+
+        lf.setTargetPosition((int)(inchesToTicks(straight+strafe+turnDistance)));
+        lb.setTargetPosition((int)(inchesToTicks(straight-strafe+turnDistance)));
+        rf.setTargetPosition((int)(inchesToTicks(straight-strafe-turnDistance)));
+        rb.setTargetPosition((int)(inchesToTicks(straight+strafe-turnDistance)));
+
+        double max=Math.max(Math.max(straight+strafe+turnDistance,straight-strafe+turnDistance),Math.max(straight-strafe-turnDistance, straight+strafe-turnDistance));
+
+        rf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        lf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        rb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        lb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+
+        setPower(
+                power*(straight-strafe-turnDistance)/max,
+                power*(straight+strafe-turnDistance)/max,
+                power*(straight+strafe+turnDistance)/max,
+                power*(straight-strafe+turnDistance)/max);
+
+    }
+
+    public void moveCoords(double[] currentPos, double[] newPos, double power){
+        rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        double turnAngle=newPos[2]-currentPos[0];
+        double turnDistance=turnAngle/360.0*2*Math.PI*RobotVariables.WHEEL_DISTANCE_FROM_CENTER;
+
+        double straight=(newPos[0]-currentPos[0])*(1+Math.sin(currentPos[2]));
+        double strafe=(newPos[1]-currentPos[1])*(1+Math.sin(currentPos[2]));
 
         lf.setTargetPosition((int)(inchesToTicks(straight+strafe+turnDistance)));
         lb.setTargetPosition((int)(inchesToTicks(straight-strafe+turnDistance)));
@@ -140,11 +173,11 @@ public class DriveTrain {
     }
 
     public double ticksToInches(double ticks){
-        return ticks/(Constants.TICKS_PER_REVOLUTION/Constants.WHEEL_CIRCUMFERENCE);
+        return ticks/(Constants.TICKS_PER_REVOLUTION/RobotVariables.WHEEL_CIRCUMFERENCE);
     }
 
     public double inchesToTicks(double inches){
-        return inches*(Constants.TICKS_PER_REVOLUTION/Constants.WHEEL_CIRCUMFERENCE);
+        return inches*(Constants.TICKS_PER_REVOLUTION/RobotVariables.WHEEL_CIRCUMFERENCE);
     }
 
 

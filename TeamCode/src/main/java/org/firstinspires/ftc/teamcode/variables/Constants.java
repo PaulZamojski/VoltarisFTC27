@@ -12,10 +12,6 @@ public class Constants {
     public static final double KG_PER_LB=0.45359237;
     public static final double LBS_PER_KG=(1.0/KG_PER_LB);
 
-    //Robot
-    public static final double WHEEL_CIRCUMFERENCE=104*IN_PER_MM*2*Math.PI;
-    public static final double WHEEL_DISTANCE_FROM_CENTER=12; // TEMPORARY Fill in.
-
     //Scoring Elements
     public static final double POLLEN_DIAMETER=2.8;
     public static final double POLLEN_WEIGHT=0.055;
