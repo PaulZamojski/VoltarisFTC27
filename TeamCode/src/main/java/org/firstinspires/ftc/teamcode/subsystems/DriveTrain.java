@@ -138,6 +138,9 @@ public class DriveTrain {
                 power*(straight+strafe+turnDistance)/max,
                 power*(straight-strafe+turnDistance)/max);
 
+        while(lf.isBusy()){}
+
+        setPowerAll(0.0);
     }
 
     public void moveCoords(double[] currentPos, double[] newPos, double power){
@@ -170,6 +173,9 @@ public class DriveTrain {
                 power*(straight+strafe+turnDistance)/max,
                 power*(straight-strafe+turnDistance)/max);
 
+        while(lf.isBusy()){}
+
+        setPowerAll(0.0);
     }
 
     public double ticksToInches(double ticks){
