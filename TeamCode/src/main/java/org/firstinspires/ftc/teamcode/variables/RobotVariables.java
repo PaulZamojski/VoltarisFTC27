@@ -8,6 +8,5 @@ public class RobotVariables {
     public static final double WHEEL_DISTANCE_FROM_CENTER=12; // TEMPORARY Fill in.
 
     //Auto
-    public static final double[] AUTO_START={58.0,8.0,270.0};
-    public static final double[] AUTO_NODE1={58.0,18.0,270.0};
+    public static final double[] AUTO_START={58.0,8.0,270.0}; //directly in front of red's up hive
 }

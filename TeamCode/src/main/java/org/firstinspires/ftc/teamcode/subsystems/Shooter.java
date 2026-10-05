@@ -18,7 +18,7 @@ public class Shooter {
         shootingMotor=hwMap.get(DcMotorEx.class,"shootingMotor");
         shootingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shootingMotor.setPower(0.0);
-        shootingMotor.setVelocity(RobotVariables.SHOOTING_MOTOR_RPM*Constants.TICKS_PER_REVOLUTION/60.0);
+        shootingMotor.setVelocity(RobotVariables.SHOOTING_MOTOR_RPM*Constants.TICKS_PER_REVOLUTION/60.0); //TPS at 1.0 power
 
         shootingGate=hwMap.get(Servo.class, "shootingGate");
     }

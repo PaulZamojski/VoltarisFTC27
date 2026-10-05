@@ -7,4 +7,13 @@ TeleOp.java (Class)
             mecanum calculations
 
         Shooter.java (Class)
+
+        Intake.jave (Class)
+
         position tracking (rotational only so far)
+
+Auto.java (Class)
+    Robot.java (Same as above)
+
+    Manually coded auto
+    Auto loop (not dome)
