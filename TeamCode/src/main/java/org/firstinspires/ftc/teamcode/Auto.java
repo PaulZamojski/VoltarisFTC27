@@ -11,7 +11,7 @@ import java.util.Arrays;
 
 @Autonomous (name = "auto")
 public class Auto extends LinearOpMode{
-    Robot robot=new Robot(hardwareMap);
+    // Robot robot=new Robot(hardwareMap); <-- Causes crash due to not being inside of method
 
     double[] currentPos=RobotVariables.AUTO_START;
     double[] newPos;
@@ -33,7 +33,7 @@ public class Auto extends LinearOpMode{
 
     public void runOpMode(){
         waitForStart();
-
+        Robot robot=new Robot(hardwareMap); // <-- now in method
         //Interpreting Starting Steps
         for (double[] step : autoSteps) {
             switch ((int) step[0]) {

@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 //Rotational Position
 import com.qualcomm.robotcore.hardware.IMU;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.variables.Constants;
 import org.firstinspires.ftc.teamcode.variables.RobotVariables;
@@ -44,7 +46,7 @@ public class DriveTrain {
         rb.setPower(0.0);
 
         speed=0;
-        parked=true;
+        parked=false;
 
         this.imu=imu;
     }
@@ -63,8 +65,8 @@ public class DriveTrain {
 
         this.rf.setPower(fr);
         this.rb.setPower(br);
-        this.lb.setPower(bl);
-        lf.setPower(fl);
+        this.lb.setPower(-bl);
+        this.lf.setPower(-fl);
     }
     public void setPowerAll(double power){
         if(parked){return;}
@@ -80,16 +82,18 @@ public class DriveTrain {
     public void move(Gamepad gamepad1){
         if(parked){return;}
 
-        double y = -gamepad1.left_stick_y; //Y stick value is reversed
+        double y = - gamepad1.left_stick_y; //Y stick value is reversed
         double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
 
 
-        if (gamepad1.start) {
-            imu.resetYaw();
-        }
 
-        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        //if (gamepad1.start) {
+        //    imu.resetYaw();
+        //}
+
+        //double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double botHeading=90;
 
         // Rotate the movement direction counter to the bot's rotation
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
@@ -100,10 +104,11 @@ public class DriveTrain {
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio
         double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-        double frontLeftPower = (rotY + rotX + rx) / denominator;
-        double backLeftPower = (rotY - rotX + rx) / denominator;
-        double frontRightPower = (rotY - rotX - rx) / denominator;
-        double backRightPower = (rotY + rotX - rx) / denominator;
+        double frontLeftPower = (y + x + rx) / denominator;
+        double backLeftPower = (y - x + rx) / denominator;
+        double frontRightPower = (y - x -  rx) / denominator;
+        double backRightPower = (y + x - rx) / denominator;
+
 
         setPower(frontRightPower, backRightPower, frontLeftPower, backLeftPower);
     }
@@ -154,6 +159,7 @@ public class DriveTrain {
 
         double straight=(newPos[0]-currentPos[0])*(1+Math.sin(currentPos[2]));
         double strafe=(newPos[1]-currentPos[1])*(1+Math.sin(currentPos[2]));
+        System.out.println("Straigt: "+straight+"Strafe: "+strafe);
 
         lf.setTargetPosition((int)(inchesToTicks(straight+strafe+turnDistance)));
         lb.setTargetPosition((int)(inchesToTicks(straight-strafe+turnDistance)));
