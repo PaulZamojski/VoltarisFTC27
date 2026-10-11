@@ -6,12 +6,18 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
+import org.opencv.core.Mat;
+
+import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.limelightvision.LLResult;
 
 public class Robot {
 
     //Subsystems
     public DriveTrain driveTrain;
     public Shooter shooter;
+
+    public Limelight3A limelight;
 
     IMU imu;
 
@@ -24,5 +30,10 @@ public class Robot {
                 RevHubOrientationOnRobot.LogoFacingDirection.UP,
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         imu.initialize(parameters);
+
+        limelight=hwMap.get(Limelight3A.class, "limelight");
+        limelight.pipelineSwitch(0);
     }
+
+
 }

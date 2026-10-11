@@ -20,7 +20,6 @@ public class DriveTrain {
     IMU imu;
 
     //Vars
-    double speed;
     public boolean parked;
 
     //Motors
@@ -45,20 +44,11 @@ public class DriveTrain {
         rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rb.setPower(0.0);
 
-        speed=0;
-        parked=false;
+        parked=true;
 
         this.imu=imu;
     }
 
-    public double getSpeed(){
-        return speed;
-    }
-    public void setSpeed(double speed){
-        if(parked){return;}
-
-        this.speed=speed;
-    }
 
     public void setPower(double fr, double br, double fl, double bl){
         if(parked){return;}
@@ -77,6 +67,9 @@ public class DriveTrain {
         lf.setPower(power);
     }
 
+    public static double sin(double degrees){return Math.sin(degrees);}
+    public static double cos(double degrees){return Math.cos(degrees);}
+
 
 
     public void move(Gamepad gamepad1){
@@ -87,13 +80,11 @@ public class DriveTrain {
         double rx = gamepad1.right_stick_x;
 
 
+        if (gamepad1.start) {
+            imu.resetYaw();
+        }
 
-        //if (gamepad1.start) {
-        //    imu.resetYaw();
-        //}
-
-        //double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        double botHeading=90;
+        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         // Rotate the movement direction counter to the bot's rotation
         double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
@@ -149,39 +140,19 @@ public class DriveTrain {
     }
 
     public void moveCoords(double[] currentPos, double[] newPos, double power){
-        rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         double turnAngle=newPos[2]-currentPos[0];
-        double turnDistance=turnAngle/360.0*2*Math.PI*RobotVariables.WHEEL_DISTANCE_FROM_CENTER;
 
-        double straight=(newPos[0]-currentPos[0])*(1+Math.sin(currentPos[2]));
-        double strafe=(newPos[1]-currentPos[1])*(1+Math.sin(currentPos[2]));
-        System.out.println("Straigt: "+straight+"Strafe: "+strafe);
+        double x=newPos[0]-currentPos[0];
+        double y=newPos[1]-currentPos[1];
+        double heading=currentPos[2];
 
-        lf.setTargetPosition((int)(inchesToTicks(straight+strafe+turnDistance)));
-        lb.setTargetPosition((int)(inchesToTicks(straight-strafe+turnDistance)));
-        rf.setTargetPosition((int)(inchesToTicks(straight-strafe-turnDistance)));
-        rb.setTargetPosition((int)(inchesToTicks(straight+strafe-turnDistance)));
+        double[] rotatedCoordinates={x*cos(-heading)-y*sin(-heading),x*sin(-heading)+y*sin(-heading)};
 
-        double max=Math.max(Math.max(straight+strafe+turnDistance,straight-strafe+turnDistance),Math.max(straight-strafe-turnDistance, straight+strafe-turnDistance));
+        double movementDistance=Math.hypot(x,y);
+        double movementAngle=Math.asin(rotatedCoordinates[1]/movementDistance);
 
-        rf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        lf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        rb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        lb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-        setPower(
-                power*(straight-strafe-turnDistance)/max,
-                power*(straight+strafe-turnDistance)/max,
-                power*(straight+strafe+turnDistance)/max,
-                power*(straight-strafe+turnDistance)/max);
-
-        while(lf.isBusy()){}
-
-        setPowerAll(0.0);
+        moveVector(movementDistance,movementAngle,power,turnAngle);
     }
 
     public double ticksToInches(double ticks){

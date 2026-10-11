@@ -18,7 +18,7 @@ public class Shooter {
         shootingMotor=hwMap.get(DcMotorEx.class,"shootingMotor");
         shootingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shootingMotor.setPower(0.0);
-        shootingMotor.setVelocity(RobotVariables.SHOOTING_MOTOR_RPM*Constants.TICKS_PER_REVOLUTION/60.0); //TPS at 1.0 power
+            shootingMotor.setVelocity(RobotVariables.SHOOTING_MOTOR_RPM*Constants.TICKS_PER_REVOLUTION/60.0); //TPS at 1.0 power
 
         shootingGate=hwMap.get(Servo.class, "shootingGate");
     }
@@ -30,6 +30,9 @@ public class Shooter {
         return shootingMotor.getPower();
     }
 
+    public void setShooterVelocity(double ticksPerSecond){shootingMotor.setVelocity(ticksPerSecond);}
+    public double getShooterVelocity(){return shootingMotor.getVelocity();}
+
     public void setServoDegree(double degree){
         shootingGate.setPosition(degree/180.0);
     }
@@ -39,6 +42,6 @@ public class Shooter {
 
     public void allowBalls(boolean allow){
         if (allow){shootingGate.setPosition(0.0);}
-            else{shootingGate.setPosition(0.5);}
+        else{shootingGate.setPosition(0.5);}
     }
 }
