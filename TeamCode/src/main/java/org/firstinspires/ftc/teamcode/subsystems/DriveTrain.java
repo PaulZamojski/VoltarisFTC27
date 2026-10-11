@@ -29,29 +29,29 @@ public class DriveTrain {
     public DcMotorEx rb;
 
     public DriveTrain(HardwareMap hwMap, IMU imu){
-        lf=hwMap.get(DcMotorEx.class,"fl");
+        lf = hwMap.get(DcMotorEx.class,"fl");
         lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lf.setPower(0.0);
 
-        rf =hwMap.get(DcMotorEx.class,"fr");
+        rf = hwMap.get(DcMotorEx.class,"fr");
         rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        lb =hwMap.get(DcMotorEx.class,"bl");
+        lb = hwMap.get(DcMotorEx.class,"bl");
         lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lb.setPower(0.0);
 
-        rb =hwMap.get(DcMotorEx.class,"br");
+        rb = hwMap.get(DcMotorEx.class,"br");
         rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rb.setPower(0.0);
 
-        parked=true;
+        parked = true;
 
-        this.imu=imu;
+        this.imu = imu;
     }
 
 
     public void setPower(double fr, double br, double fl, double bl){
-        if(parked){return;}
+        if(parked)return;
 
         this.rf.setPower(fr);
         this.rb.setPower(br);
@@ -67,15 +67,16 @@ public class DriveTrain {
         lf.setPower(power);
     }
 
-    public static double sin(double degrees){return Math.sin(degrees);}
-    public static double cos(double degrees){return Math.cos(degrees);}
+    public static double sin(double degrees) {return Math.sin(degrees);}
+    public static double cos(double degrees) {return Math.cos(degrees);}
 
-
+    public double ticksToInches(double ticks){return ticks/(Constants.TICKS_PER_REVOLUTION / RobotVariables.WHEEL_CIRCUMFERENCE);}
+    public double inchesToTicks(double inches){return inches*(Constants.TICKS_PER_REVOLUTION / RobotVariables.WHEEL_CIRCUMFERENCE);}
 
     public void move(Gamepad gamepad1){
         if(parked){return;}
 
-        double y = - gamepad1.left_stick_y; //Y stick value is reversed
+        double y = -gamepad1.left_stick_y; //Y stick value is reversed
         double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
 
@@ -121,7 +122,7 @@ public class DriveTrain {
         rf.setTargetPosition((int)(inchesToTicks(straight-strafe-turnDistance)));
         rb.setTargetPosition((int)(inchesToTicks(straight+strafe-turnDistance)));
 
-        double max=Math.max(Math.max(straight+strafe+turnDistance,straight-strafe+turnDistance),Math.max(straight-strafe-turnDistance, straight+strafe-turnDistance));
+        double max=Math.max(Math.max(straight + strafe + turnDistance, straight - strafe + turnDistance), Math.max(straight - strafe - turnDistance, straight + strafe - turnDistance));
 
         rf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         lf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
@@ -129,10 +130,10 @@ public class DriveTrain {
         lb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
         setPower(
-                power*(straight-strafe-turnDistance)/max,
-                power*(straight+strafe-turnDistance)/max,
-                power*(straight+strafe+turnDistance)/max,
-                power*(straight-strafe+turnDistance)/max);
+                power * (straight-strafe-turnDistance) / max,
+                power * (straight+strafe-turnDistance) / max,
+                power * (straight+strafe+turnDistance) / max,
+                power * (straight-strafe+turnDistance) / max);
 
         while(lf.isBusy()){}
 
@@ -141,27 +142,22 @@ public class DriveTrain {
 
     public void moveCoords(double[] currentPos, double[] newPos, double power){
 
-        double turnAngle=newPos[2]-currentPos[0];
+        double turnAngle=newPos[2] - currentPos[0];
 
-        double x=newPos[0]-currentPos[0];
-        double y=newPos[1]-currentPos[1];
-        double heading=currentPos[2];
+        double x = newPos[0] - currentPos[0];
+        double y = newPos[1] - currentPos[1];
+        double heading = currentPos[2];
 
-        double[] rotatedCoordinates={x*cos(-heading)-y*sin(-heading),x*sin(-heading)+y*sin(-heading)};
+        //rotates the coordinates by heading degrees CW so the heading is effectively 0 and WAY easier to work with
+        double[] rotatedCoordinates = {x*cos(-heading) - y*sin(-heading), x*sin(-heading) + y*sin(-heading)};
 
-        double movementDistance=Math.hypot(x,y);
-        double movementAngle=Math.asin(rotatedCoordinates[1]/movementDistance);
+        double movementDistance = Math.hypot(x,y);
+        double movementAngle = Math.asin(rotatedCoordinates[1] / movementDistance);
 
-        moveVector(movementDistance,movementAngle,power,turnAngle);
+        moveVector(movementDistance, movementAngle, power, turnAngle);
     }
 
-    public double ticksToInches(double ticks){
-        return ticks/(Constants.TICKS_PER_REVOLUTION/RobotVariables.WHEEL_CIRCUMFERENCE);
-    }
 
-    public double inchesToTicks(double inches){
-        return inches*(Constants.TICKS_PER_REVOLUTION/RobotVariables.WHEEL_CIRCUMFERENCE);
-    }
 
 
 }
