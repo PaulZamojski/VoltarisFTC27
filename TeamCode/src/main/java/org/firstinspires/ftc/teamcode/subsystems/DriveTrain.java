@@ -73,7 +73,7 @@ public class DriveTrain {
     public double ticksToInches(double ticks){return ticks/(Constants.TICKS_PER_REVOLUTION / RobotVariables.WHEEL_CIRCUMFERENCE);}
     public double inchesToTicks(double inches){return inches*(Constants.TICKS_PER_REVOLUTION / RobotVariables.WHEEL_CIRCUMFERENCE);}
 
-    public void move(Gamepad gamepad1){
+    public void move(Gamepad gamepad1, boolean fieldOriented){
         if(parked){return;}
 
         double y = -gamepad1.left_stick_y; //Y stick value is reversed
@@ -88,14 +88,16 @@ public class DriveTrain {
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         // Rotate the movement direction counter to the bot's rotation
-        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+        if(fieldOriented) {
+            x = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+            y = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+        }
 
-        rotX = rotX * 1.1;  // Counteract imperfect strafing
+        x = x * 1.1;  // Counteract imperfect strafing
 
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio
-        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
         double frontLeftPower = (y + x + rx) / denominator;
         double backLeftPower = (y - x + rx) / denominator;
         double frontRightPower = (y - x -  rx) / denominator;
@@ -149,7 +151,7 @@ public class DriveTrain {
         double heading = currentPos[2];
 
         //rotates the coordinates by heading degrees CW so the heading is effectively 0 and WAY easier to work with
-        double[] rotatedCoordinates = {x*cos(-heading) - y*sin(-heading), x*sin(-heading) + y*sin(-heading)};
+        double[] rotatedCoordinates = {x*cos(-heading) - y*sin(-heading), x*sin(-heading) + y*cos(-heading)};
 
         double movementDistance = Math.hypot(x,y);
         double movementAngle = Math.asin(rotatedCoordinates[1] / movementDistance);
