@@ -21,6 +21,8 @@ public class TeleOp extends LinearOpMode{
         //What happens after "pla y" pressed on CH
         while(opModeIsActive()){
             telemetry.addData("Field oriented?",fieldOriented);
+            telemetry.addData("Parked?",robot.driveTrain.parked);
+            telemetry.addData("Bot Angle:", -robot.driveTrain.getDirection());
 
             telemetry.update();
 
@@ -30,7 +32,7 @@ public class TeleOp extends LinearOpMode{
             if(gamepad1.backWasPressed()){
                 robot.driveTrain.parked=!robot.driveTrain.parked;
             }
-            if(gamepad1.options){
+            if(gamepad1.left_stick_button){
                 fieldOriented=!fieldOriented;
             }
 

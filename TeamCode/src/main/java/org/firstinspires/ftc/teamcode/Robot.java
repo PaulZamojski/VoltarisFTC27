@@ -22,7 +22,7 @@ public class Robot {
     IMU imu;
 
     public Robot(HardwareMap hwMap){
-        driveTrain=new DriveTrain(hwMap, imu);
+
 
         IMU imu = hwMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
@@ -31,8 +31,10 @@ public class Robot {
                 RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
         imu.initialize(parameters);
 
-        limelight=hwMap.get(Limelight3A.class, "limelight");
-        limelight.pipelineSwitch(0);
+        driveTrain=new DriveTrain(hwMap, imu);
+
+        //limelight=hwMap.get(Limelight3A.class, "limelight");
+        //limelight.pipelineSwitch(0);
     }
 
 

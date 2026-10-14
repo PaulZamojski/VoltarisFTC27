@@ -73,6 +73,8 @@ public class DriveTrain {
     public double ticksToInches(double ticks){return ticks/(Constants.TICKS_PER_REVOLUTION / RobotVariables.WHEEL_CIRCUMFERENCE);}
     public double inchesToTicks(double inches){return inches*(Constants.TICKS_PER_REVOLUTION / RobotVariables.WHEEL_CIRCUMFERENCE);}
 
+
+    public double getDirection(){return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);}
     public void move(Gamepad gamepad1, boolean fieldOriented){
         if(parked){return;}
 
@@ -89,8 +91,9 @@ public class DriveTrain {
 
         // Rotate the movement direction counter to the bot's rotation
         if(fieldOriented) {
-            x = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+            double x2 = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
             y = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+            x=x2;
         }
 
         x = x * 1.1;  // Counteract imperfect strafing
