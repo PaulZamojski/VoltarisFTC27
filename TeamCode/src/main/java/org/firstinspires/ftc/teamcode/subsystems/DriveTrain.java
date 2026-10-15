@@ -28,6 +28,8 @@ public class DriveTrain {
     public DcMotorEx lb;
     public DcMotorEx rb;
 
+    public double powerMultiplier;
+
     public DriveTrain(HardwareMap hwMap, IMU imu){
         lf = hwMap.get(DcMotorEx.class,"fl");
         lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -47,25 +49,30 @@ public class DriveTrain {
         parked = true;
 
         this.imu = imu;
+
+        powerMultiplier=1.0;
     }
 
 
     public void setPower(double fr, double br, double fl, double bl){
         if(parked)return;
 
-        this.rf.setPower(fr);
-        this.rb.setPower(br);
-        this.lb.setPower(-bl);
-        this.lf.setPower(-fl);
+        this.rf.setPower(fr*powerMultiplier);
+        this.rb.setPower(br*powerMultiplier);
+        this.lb.setPower(-bl*powerMultiplier);
+        this.lf.setPower(-fl*powerMultiplier);
     }
     public void setPowerAll(double power){
         if(parked){return;}
 
-        rf.setPower(power);
-        rb.setPower(power);
-        lb.setPower(power);
-        lf.setPower(power);
+        rf.setPower(power*powerMultiplier);
+        rb.setPower(power*powerMultiplier);
+        lb.setPower(power*powerMultiplier);
+        lf.setPower(power*powerMultiplier);
     }
+
+    public void setPowerMultiplier(double multiplier){this.powerMultiplier=multiplier;}
+    public double getPowerMultiplier(){return this.powerMultiplier;}
 
     public static double sin(double degrees) {return Math.sin(degrees);}
     public static double cos(double degrees) {return Math.cos(degrees);}

@@ -20,6 +20,7 @@ public class TeleOp extends LinearOpMode{
 
         //What happens after "pla y" pressed on CH
         while(opModeIsActive()){
+            telemetry.addData("Drivetrain Power:",robot.driveTrain.getPowerMultiplier());
             telemetry.addData("Field oriented?",fieldOriented);
             telemetry.addData("Parked?",robot.driveTrain.parked);
             telemetry.addData("Bot Angle:", -robot.driveTrain.getDirection());
@@ -35,6 +36,12 @@ public class TeleOp extends LinearOpMode{
             if(gamepad1.left_stick_button){
                 fieldOriented=!fieldOriented;
             }
+            if (Math.abs(gamepad1.left_stick_y) > 0.5) {
+                robot.driveTrain.powerMultiplier += gamepad1.left_stick_y * 0.1;//Value tbd
+                if (Math.abs(robot.driveTrain.getPowerMultiplier()) > 1.0) {
+                    robot.driveTrain.powerMultiplier/= Math.abs(robot.driveTrain.powerMultiplier);
+                }
+            }
 
             //Shooting
             if(gamepad2.left_bumper) {
@@ -42,6 +49,8 @@ public class TeleOp extends LinearOpMode{
             } else if (gamepad2.right_bumper) {
                 robot.shooter.setPower(0.0);
             }
+
+
             //if(gamepad2.left_trigger_pressed && (robot.shooter.getPower()!=0)){
             //    robot.shooter.setServoDegree(90);
             //} else if (gamepad2.right_trigger_pressed || (robot.shooter.getPower()==0)){
