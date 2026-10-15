@@ -13,7 +13,9 @@ public class Pose{
     }
 
     public void main(String[] args) {
-        Pose startingPoseD = new Pose(56, 8.0, 270);
-        Pose bottomHiveShooting = new Pose(56,18,270);
+    }
+
+    public double[] getPos(){
+        return new double[]{x, y, heading};
     }
 }

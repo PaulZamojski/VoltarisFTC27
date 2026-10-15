@@ -9,14 +9,11 @@ import org.firstinspires.ftc.teamcode.variables.RobotVariables;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
-import org.firstinspires.ftc.teamcode.Pose;
+
 
 @Autonomous (name = "auto")
 public class Auto extends LinearOpMode {
     Robot robot = new Robot(hardwareMap);
-
-    double[] currentPos = RobotVariables.AUTO_START;
-    double[] newPos;
 
     boolean topHive = false;
 
@@ -26,6 +23,8 @@ public class Auto extends LinearOpMode {
 
         //robot.limelight.start();
         //Starting Steps
+        moveCoords(RobotVariables.STARTING_POSE_D.getPos(), RobotVariables.BOTTOM_HIVE_SHOOTING.getPos(), 0.5);
+        moveCoords(RobotVariables.BOTTOM_HIVE_SHOOTING.getPos(), RobotVariables.STARTING_POSE_D.getPos(), 0.5);
 
 
         //Main loop
@@ -34,4 +33,5 @@ public class Auto extends LinearOpMode {
 
         }
     }
+    public void moveCoords(double[] currentPos, double[] newPos, double power){robot.driveTrain.moveCoords(currentPos, newPos, power);}
 }
