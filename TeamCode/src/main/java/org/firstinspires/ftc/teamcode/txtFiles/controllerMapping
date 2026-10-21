@@ -3,21 +3,19 @@ This file is for recording what inputs on each controller correspond to which fu
 Controller 1:
     Left Stick: Straight Movement
     Right Stick: Rotation (X-axis only)
+    Right Stick: Speed multiplier adjust (Y-axis only)
 
     D-Pad Up:
     D-Pad Down:
     D-Pad Left:
     D-Pad Right:
 
-    X:
-    O:
-    Square:
-    Triangle:
+    Y: Reset drivetrain power multiplier
 
     Left Bumper (L1):
     Right Bumper (R1):
-    Left Trigger (L2): Toggle field/robot oriented driving.
-    Right Trigger (R2):
+    Left Trigger (L2): Field Oriented Driving
+    Right Trigger (R2): Robot Oriented Driving
 
     Left Stick Press (L3):
     Right Stick Press (R3):

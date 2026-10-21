@@ -28,7 +28,7 @@ public class DriveTrain {
     public DcMotorEx lb;
     public DcMotorEx rb;
 
-    public double powerMultiplier;
+    public double powerMultiplier=1.0;
 
     public DriveTrain(HardwareMap hwMap, IMU imu){
         lf = hwMap.get(DcMotorEx.class,"fl");
@@ -98,9 +98,9 @@ public class DriveTrain {
 
         // Rotate the movement direction counter to the bot's rotation
         if(fieldOriented) {
-            double x2 = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+            double x0 = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
             y = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-            x=x2;
+            x=x0;
         }
 
         x = x * 1.1;  // Counteract imperfect strafing

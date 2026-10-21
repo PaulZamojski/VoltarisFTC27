@@ -20,7 +20,7 @@ public class TeleOp extends LinearOpMode{
 
         //What happens after "pla y" pressed on CH
         while(opModeIsActive()){
-            telemetry.addData("Drivetrain Power:",robot.driveTrain.getPowerMultiplier());
+            //telemetry.addData("Drivetrain Power",robot.driveTrain.getPowerMultiplier());
             telemetry.addData("Field oriented?",fieldOriented);
             telemetry.addData("Parked?",robot.driveTrain.parked);
             telemetry.addData("Bot Angle:", -robot.driveTrain.getDirection());
@@ -33,14 +33,24 @@ public class TeleOp extends LinearOpMode{
             if(gamepad1.backWasPressed()){
                 robot.driveTrain.parked=!robot.driveTrain.parked;
             }
-            if(gamepad1.left_stick_button){
-                fieldOriented=!fieldOriented;
+            if(gamepad1.leftTriggerWasPressed()){
+                fieldOriented=true;
+            } else if (gamepad1.rightTriggerWasPressed()){
+                fieldOriented=false;
             }
-            if (Math.abs(gamepad1.left_stick_y) > 0.5) {
-                robot.driveTrain.powerMultiplier += gamepad1.left_stick_y * 0.1;//Value tbd
-                if (Math.abs(robot.driveTrain.getPowerMultiplier()) > 1.0) {
-                    robot.driveTrain.powerMultiplier/= Math.abs(robot.driveTrain.powerMultiplier);
+
+
+            if (Math.abs(gamepad1.right_stick_y)>=.5) {
+                robot.driveTrain.powerMultiplier -= gamepad1.left_stick_y * 0.1;//Value tbd
+                if (robot.driveTrain.getPowerMultiplier() > 1.0) {
+                    robot.driveTrain.powerMultiplier=1.0;
                 }
+            }
+            if(robot.driveTrain.getPowerMultiplier()<=.3){
+                robot.driveTrain.setPowerMultiplier(.3);
+            }
+            if (gamepad1.y){
+                robot.driveTrain.setPowerMultiplier(1.0);
             }
 
             //Shooting
