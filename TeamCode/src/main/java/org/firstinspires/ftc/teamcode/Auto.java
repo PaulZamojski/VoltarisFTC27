@@ -1,10 +1,18 @@
 package org.firstinspires.ftc.teamcode;
+import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import org.firstinspires.ftc.teamcode.*;
+
 
 import org.firstinspires.ftc.teamcode.subsystems.DriveTrain;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.variables.Constants;
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.variables.RobotVariables;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.pedropathing.follower.Follower;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -13,25 +21,67 @@ import java.util.Arrays;
 
 @Autonomous (name = "auto")
 public class Auto extends LinearOpMode {
-    Robot robot = new Robot(hardwareMap);
+    Robot robot;
+
 
     boolean topHive = false;
 
+    //Poses
+    private final Poses STARTING_POSE_D = new Poses(56,8,270);
+    private final Poses BOTTOM_HIVE_SHOOTING = new Poses(56, 18, 270);
+    private final Poses TOP_HIVE_SHOOTING = new Poses(56,134,0);
+    private final Poses RED_GARDEN_START = new Poses(18,8,180);
+    private final Poses RED_BOTTOM_CORNER = new Poses(10,8,180);
+    private final Poses RED_FLOWER = new Poses(8,270,270);
+    private final Poses PARKED = new Poses(8,105,90);
 
-    public void runOpMode() {
+    private final int SHOOTING_VELOCITY=15_000;
+
+    final boolean bottomHiveStart=true;
+
+
+    public void runOpMode() throws InterruptedException {
+        robot = new Robot(hardwareMap);
+
         waitForStart();
 
-        //robot.limelight.start();
-        //Starting Steps
-        moveCoords(RobotVariables.STARTING_POSE_D.getPos(), RobotVariables.BOTTOM_HIVE_SHOOTING.getPos(), 0.5);
-        moveCoords(RobotVariables.BOTTOM_HIVE_SHOOTING.getPos(), RobotVariables.STARTING_POSE_D.getPos(), 0.5);
+        if (bottomHiveStart) {
 
+            moveCoords(STARTING_POSE_D.getPos(), BOTTOM_HIVE_SHOOTING.getPos(), .5);
+            robot.shooter.runShootingSequence(SHOOTING_VELOCITY);
 
-        //Main loop
+            moveCoords(BOTTOM_HIVE_SHOOTING.getPos(), RED_GARDEN_START.getPos(), .5);
+            robot.intake.setIntakePower(1.0);
+            moveCoords(RED_GARDEN_START.getPos(), RED_BOTTOM_CORNER.getPos(), .5);
+            sleep(50);
+            robot.intake.setIntakePower(0);
+
+            moveCoords(RED_BOTTOM_CORNER.getPos(), TOP_HIVE_SHOOTING.getPos(), 1);
+            robot.shooter.runShootingSequence(SHOOTING_VELOCITY);
+
+            moveCoords(TOP_HIVE_SHOOTING.getPos(), RED_FLOWER.getPos(), .5);
+            robot.intake.setIntakePower(1);
+            sleep(2000);
+
+            moveCoords(RED_FLOWER.getPos(), BOTTOM_HIVE_SHOOTING.getPos(), .5);
+            robot.shooter.runShootingSequence(SHOOTING_VELOCITY);
+
+            moveCoords(BOTTOM_HIVE_SHOOTING.getPos(), PARKED.getPos(), .5);
+        }
+
         while (opModeIsActive()) {
 
 
         }
     }
+    public void sleep(int milliseconds){
+        try {
+            sleep(milliseconds);
+        }catch (Exception e){
+            System.out.println(e);
+        }
+    }
+
     public void moveCoords(double[] currentPos, double[] newPos, double power){robot.driveTrain.moveCoords(currentPos, newPos, power);}
 }
+

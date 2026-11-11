@@ -10,11 +10,15 @@ public class TeleOp extends LinearOpMode{
     //Vars
     boolean fieldOriented=false;
 
+    double shootingVelocity = 15_000;
+
+    boolean allowBalls=false;
+
     Robot robot;
     public void runOpMode(){
         //Init
         System.out.println("Op mode start");
-        robot= new Robot(hardwareMap);
+        robot = new Robot(hardwareMap);
         System.out.println("Robot made");
         waitForStart();
 
@@ -40,7 +44,7 @@ public class TeleOp extends LinearOpMode{
             }
 
 
-            if (Math.abs(gamepad1.right_stick_y)>=.5) {
+            /*** if (Math.abs(gamepad1.right_stick_y)>=.5) {
                 robot.driveTrain.powerMultiplier -= gamepad1.left_stick_y * 0.1;//Value tbd
                 if (robot.driveTrain.getPowerMultiplier() > 1.0) {
                     robot.driveTrain.powerMultiplier=1.0;
@@ -52,20 +56,39 @@ public class TeleOp extends LinearOpMode{
             if (gamepad1.y){
                 robot.driveTrain.setPowerMultiplier(1.0);
             }
+             **/
 
-            //Shooting
+            //Controller 2
+            telemetry.addData("\n\n\n","\n\n\n");
+            telemetry.addData("Shooter Velocity", shootingVelocity);
+            telemetry.addData("Allow Balls?", allowBalls);
+            telemetry.addData("Intake Power:", robot.intake.getIntakePower());
+
             if(gamepad2.left_bumper) {
-                robot.shooter.setPower(1.0);
+                robot.shooter.setShooterVelocity(shootingVelocity);
             } else if (gamepad2.right_bumper) {
-                robot.shooter.setPower(0.0);
+                robot.shooter.setShooterVelocity(0.0);
+            }
+            if (Math.abs(gamepad2.right_stick_y) >= .3){
+                shootingVelocity+=100*gamepad2.right_stick_y;
             }
 
 
-            //if(gamepad2.left_trigger_pressed && (robot.shooter.getPower()!=0)){
-            //    robot.shooter.setServoDegree(90);
-            //} else if (gamepad2.right_trigger_pressed || (robot.shooter.getPower()==0)){
-            //    robot.shooter.setServoDegree(0);
-            //}
+            if(gamepad2.left_trigger_pressed && (robot.shooter.getPower()!=0)){
+                robot.shooter.allowBalls(true);
+                allowBalls=true;
+            } else if (gamepad2.right_trigger_pressed || (robot.shooter.getPower()==0)){
+                robot.shooter.allowBalls(false);
+                allowBalls=false;
+            }
+
+            if (gamepad2.circleWasPressed()){
+                robot.intake.setIntakePower(1.0);
+            }else if (gamepad2.xWasPressed()){
+                robot.intake.setIntakePower(0.0);
+            } else if (gamepad2.triangleWasPressed()){
+                robot.intake.setIntakePower(-1.0);
+            }
 
         }
     }

@@ -3,47 +3,21 @@ This file is for recording what inputs on each controller correspond to which fu
 Controller 1:
     Left Stick: Straight Movement
     Right Stick: Rotation (X-axis only)
-    Right Stick: Speed multiplier adjust (Y-axis only)
 
-    D-Pad Up:
-    D-Pad Down:
-    D-Pad Left:
-    D-Pad Right:
-
-    Y: Reset drivetrain power multiplier
-
-    Left Bumper (L1):
-    Right Bumper (R1):
     Left Trigger (L2): Field Oriented Driving
     Right Trigger (R2): Robot Oriented Driving
 
-    Left Stick Press (L3):
-    Right Stick Press (R3):
-
-    Start: Recalibrate Position
-    Back: Park
+    Start: Recalibrate Rotation
+    Back: Toggle Park
 
 Controller 2:
-    Left Stick:
-    Right Stick:
+    Left Stick: Shooter Velocity (Y-axis only)
 
-    D-Pad Up:
-    D-Pad Down:
-    D-Pad Left:
-    D-Pad Right:
-
-    X:
-    O:
-    Square:
-    Triangle:
+    X: Stop Intake
+    O: Run Intake
+    Triangle: Reverse Intake
 
     Left Bumper (L1): Start Shooter Motor
     Right Bumper (R1): Stop Shooter Motor
-    Left Trigger (L2): Start Shooting
-    Right Trigger (R2): Stop Shooting
-
-    Left Stick Press (L3):
-    Right Stick Press (R3):
-
-    Start:
-    Back:
+    Left Trigger (L2): Open Shooting Servo
+    Right Trigger (R2): Close Shooting Servo
