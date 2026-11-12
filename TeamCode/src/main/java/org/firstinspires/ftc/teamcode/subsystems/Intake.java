@@ -16,10 +16,10 @@ public class Intake {
     DcMotorEx intakeMotor;
 
     public Intake(HardwareMap hwMap){
-        leftIntakeServo=hwMap.get(CRServo.class,"leftIntakeServo");
-        rightIntakeServo=hwMap.get(CRServo.class,"rightIntakeServo");
+        leftIntakeServo=hwMap.get(CRServo.class,"LIS");
+        rightIntakeServo=hwMap.get(CRServo.class,"RIS");
 
-        intakeMotor=hwMap.get(DcMotorEx.class, "intakeMotor");
+        intakeMotor=hwMap.get(DcMotorEx.class, "intake");
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         intakeMotor.setPower(0.0);
     }
@@ -29,12 +29,13 @@ public class Intake {
 
     public void setIntakePower (double power) {
         intakeMotor.setPower(power);
+        power=(power+1.0)/2.0;
         setServosPower(power, power);
     }
     public double getIntakePower() {return intakeMotor.getPower();}
 
     public void setServosPower(double powerL, double powerR){
-        leftIntakeServo.setPower(-powerL);
+        leftIntakeServo.setPower(1-powerL);
         rightIntakeServo.setPower(powerR);
     }
 

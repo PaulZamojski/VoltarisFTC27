@@ -2,22 +2,23 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 //Class contains all drivetrain motors and methods
 
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-//Rotational Position
-import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+import org.firstinspires.ftc.teamcode.pedro.procedures.PinpointTuner;
 import org.firstinspires.ftc.teamcode.variables.Constants;
 import org.firstinspires.ftc.teamcode.variables.RobotVariables;
 
 public class DriveTrain {
     //Technical Stuff
-    IMU imu;
+    GoBildaPinpointDriver pinpoint;
 
     //Vars
     public boolean parked;
@@ -30,7 +31,7 @@ public class DriveTrain {
 
     public double powerMultiplier=1.0;
 
-    public DriveTrain(HardwareMap hwMap, IMU imu){
+    public DriveTrain(HardwareMap hwMap, GoBildaPinpointDriver pinpoint){
         lf = hwMap.get(DcMotorEx.class,"fl");
         lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lf.setPower(0.0);
@@ -48,7 +49,7 @@ public class DriveTrain {
 
         parked = true;
 
-        this.imu = imu;
+        this.pinpoint = pinpoint;
 
         powerMultiplier=1.0;
     }
@@ -81,7 +82,10 @@ public class DriveTrain {
     public double inchesToTicks(double inches){return inches*(Constants.TICKS_PER_REVOLUTION / RobotVariables.WHEEL_CIRCUMFERENCE);}
 
 
-    public double getDirection(){return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);}
+    public double getDirection(){
+        pinpoint.update();
+        return pinpoint.getHeading(UnnormalizedAngleUnit.DEGREES);
+    }
     public void move(Gamepad gamepad1, boolean fieldOriented){
         if(parked){return;}
 
@@ -91,10 +95,11 @@ public class DriveTrain {
 
 
         if (gamepad1.start) {
-            imu.resetYaw();
+            pinpoint.resetPosAndIMU();
         }
 
-        double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        pinpoint.update();
+        double botHeading =pinpoint.getHeading(AngleUnit.RADIANS);
 
         // Rotate the movement direction counter to the bot's rotation
         if(fieldOriented) {
@@ -129,17 +134,15 @@ public class DriveTrain {
         double strafe=inches*Math.cos(movementAngle);
         double turnDistance=turnAngle/360.0*2*Math.PI*RobotVariables.WHEEL_DISTANCE_FROM_CENTER;
 
-        lf.setTargetPosition((int)(inchesToTicks(straight+strafe+turnDistance)));
-        lb.setTargetPosition((int)(inchesToTicks(straight-strafe+turnDistance)));
-        rf.setTargetPosition((int)(inchesToTicks(straight-strafe-turnDistance)));
-        rb.setTargetPosition((int)(inchesToTicks(straight+strafe-turnDistance)));
 
         double max=Math.max(Math.max(straight + strafe + turnDistance, straight - strafe + turnDistance), Math.max(straight - strafe - turnDistance, straight + strafe - turnDistance));
 
-        rf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        lf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        rb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        lb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        pinpoint.update();
+        double x = pinpoint.getEncoderX();
+        double y = pinpoint.getEncoderY();
+
+        boolean yDirection = (((pinpoint.getHeading(AngleUnit.RADIANS) + movementAngle) % 2*Math.PI) < Math.PI);
+        boolean xDirection = (Math.abs(((pinpoint.getHeading(AngleUnit.RADIANS) + movementAngle) % 2*Math.PI)-Math.PI) < Math.PI/2);
 
         setPower(
                 power * (straight-strafe-turnDistance) / max,
@@ -147,7 +150,21 @@ public class DriveTrain {
                 power * (straight+strafe+turnDistance) / max,
                 power * (straight-strafe+turnDistance) / max);
 
-        while(lf.isBusy()){}
+
+        if (yDirection){
+            if (xDirection){
+                while (pinpoint.getEncoderX()<x && pinpoint.getEncoderY()<y){pinpoint.update();}
+            } else {
+                while (pinpoint.getEncoderX()>x && pinpoint.getEncoderY()<y){pinpoint.update();}
+            }
+        } else {
+            if (xDirection){
+                while (pinpoint.getEncoderX()<x && pinpoint.getEncoderY()>y){pinpoint.update();}
+            } else {
+                while (pinpoint.getEncoderX()>x && pinpoint.getEncoderY()>y){pinpoint.update();}
+            }
+        }
+
 
         setPowerAll(0.0);
     }

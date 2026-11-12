@@ -20,12 +20,12 @@ public class Shooter {
     public final double SERVO_CLOSED = 0.455;
 
     public Shooter(HardwareMap hwMap){
-        shootingMotor=hwMap.get(DcMotorEx.class,"shootingMotor");
+        shootingMotor=hwMap.get(DcMotorEx.class,"shooter");
         shootingMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         shootingMotor.setPower(0.0);
-        shootingMotor.setVelocity(RobotVariables.SHOOTING_MOTOR_RPM*Constants.TICKS_PER_REVOLUTION/60.0); //TPS at 1.0 power
 
-        shootingGate=hwMap.get(Servo.class, "shootingGate");
+        shootingGate=hwMap.get(Servo.class, "shootGate");
+        shootingGate.setPosition(SERVO_CLOSED);
     }
 
     public void setPower(double power){
@@ -35,8 +35,13 @@ public class Shooter {
         return shootingMotor.getPower();
     }
 
-    public void setShooterVelocity(double ticksPerSecond){shootingMotor.setVelocity(-ticksPerSecond);}
-    public double getShooterVelocity(){return -shootingMotor.getVelocity();}
+    public void setShooterVelocity(double ticksPerSecond){
+        shootingMotor.setVelocity(ticksPerSecond);
+    }
+    public double getShooterVelocity(){
+        System.out.println("Gonna Get Velocity");
+        return shootingMotor.getVelocity();
+    }
 
     public void setServoDegree(double degree){
         shootingGate.setPosition(degree/180.0);
@@ -48,16 +53,22 @@ public class Shooter {
     public double getServoPos(){return  shootingGate.getPosition();}
     public void setServoPos(double pos){shootingGate.setPosition(pos);}
 
-    public void allowBalls(boolean allow){
-        if (allow){shootingGate.setPosition(SERVO_OPEN);}
-        else{shootingGate.setPosition(SERVO_CLOSED);}
+    public void allowBalls(){
+        shootingGate.setPosition(SERVO_OPEN);
+        try{
+            Thread.sleep(150);
+        } catch (Exception e){};
+
+        shootingGate.setPosition(SERVO_CLOSED);
     }
 
     public void runShootingSequence(int shootingVelocity) throws InterruptedException {
-        allowBalls(true);
         setShooterVelocity(shootingVelocity);
+        allowBalls();
+        allowBalls();
+        allowBalls();
+        allowBalls();
         Thread.sleep((long) 2_000);
-        allowBalls(false);
         setShooterVelocity(0);
     }
 }

@@ -5,6 +5,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.subsystems.*;
 import org.opencv.core.Mat;
 
@@ -21,21 +22,28 @@ public class Robot {
 
     public Limelight3A limelight;
 
-    IMU imu;
+     GoBildaPinpointDriver pinpoint;
 
     public Robot(HardwareMap hwMap){
 
 
         System.out.println("Robot def");
-        IMU imu = hwMap.get(IMU.class, "imu");
-        System.out.println("IMU Gotten");
-        //Adjust the orientation parameters to match your robot
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-        imu.initialize(parameters);
+        pinpoint = hwMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
-        driveTrain=new DriveTrain(hwMap, imu);
+        //Pinpoint init
+        pinpoint.setOffsets(-0.6875, 0, DistanceUnit.INCH);
+        pinpoint.setEncoderResolution(
+                GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD
+        );
+        pinpoint.setEncoderDirections(
+                GoBildaPinpointDriver.EncoderDirection.FORWARD,
+                GoBildaPinpointDriver.EncoderDirection.FORWARD
+        );
+
+        pinpoint.resetPosAndIMU();
+        pinpoint.initialize();
+
+        driveTrain=new DriveTrain(hwMap, pinpoint);
         shooter=new Shooter(hwMap);
         intake = new Intake(hwMap);
 
