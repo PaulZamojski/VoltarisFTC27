@@ -16,7 +16,7 @@ public class Shooter {
     DcMotorEx shootingMotor;
     Servo shootingGate; //Assumed to be 180 degree servo
 
-    public final double SERVO_OPEN = 0.3;
+    public final double SERVO_OPEN = 0.300;
     public final double SERVO_CLOSED = 0.777;
 
     public Shooter(HardwareMap hwMap){
