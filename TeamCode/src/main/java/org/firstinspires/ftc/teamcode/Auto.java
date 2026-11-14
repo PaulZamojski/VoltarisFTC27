@@ -33,7 +33,7 @@ public class Auto extends LinearOpMode {
     private final Poses RED_FLOWER = new Poses(8,270,270);
     private final Poses PARKED = new Poses(8,105,90);
 
-    final boolean bottomHiveStart=true;
+    final boolean bottomHiveStart=false;
 
 
     public void runOpMode() throws InterruptedException {
@@ -58,6 +58,7 @@ public class Auto extends LinearOpMode {
 
             moveCoords(BOTTOM_HIVE_SHOOTING.getPos(), PARKED.getPos(), .5);
         }
+        robot.driveTrain.moveVector(15, Math.PI/2, .5, 0);
 
         while (opModeIsActive()) {
 

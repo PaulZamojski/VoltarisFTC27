@@ -124,30 +124,41 @@ public class DriveTrain {
     }
 
     // Goes straight
-    public void moveVector(double inches, double movementAngle, double power, double turnAngle, boolean xDirection, boolean yDirection){
+    public void moveVector(double inches, double movementAngle, double power, double turnAngle){
+        rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         if(turnAngle>180){turnAngle=turnAngle-360;}
         double straight=inches*Math.sin(movementAngle);
         double strafe=inches*Math.cos(movementAngle);
-        double turnDistance=turnAngle/360.0*2*PI*RobotVariables.WHEEL_DISTANCE_FROM_CENTER;
+        double turnDistance=turnAngle/360.0*2*Math.PI*RobotVariables.WHEEL_DISTANCE_FROM_CENTER;
 
+        lf.setTargetPosition((int)(inchesToTicks(straight+strafe+turnDistance)));
+        lb.setTargetPosition((int)(inchesToTicks(straight-strafe+turnDistance)));
+        rf.setTargetPosition((int)(inchesToTicks(straight-strafe-turnDistance)));
+        rb.setTargetPosition((int)(inchesToTicks(straight+strafe-turnDistance)));
 
         double max=Math.max(Math.max(straight + strafe + turnDistance, straight - strafe + turnDistance), Math.max(straight - strafe - turnDistance, straight + strafe - turnDistance));
 
-        pinpoint.update();
-        double x = pinpoint.getEncoderX();
-        double y = pinpoint.getEncoderY();
+        rf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        lf.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        rb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        lb.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 
-
-        System.out.println("Movement angle: "+movementAngle+"X: "+xDirection+"Y: "+yDirection);
         setPower(
                 power * (straight-strafe-turnDistance) / max,
                 power * (straight+strafe-turnDistance) / max,
                 power * (straight+strafe+turnDistance) / max,
                 power * (straight-strafe+turnDistance) / max);
-        System.out.println("Set powers: "+power*(straight-strafe-turnDistance)/max);
 
+        while(lf.isBusy()){}
 
+        setPowerAll(0.0);
+    }
+
+    /**
         if (yDirection){
             if (xDirection){
                 while (pinpoint.getEncoderX()<x || pinpoint.getEncoderY()<y){pinpoint.update();System.out.println("going");}
@@ -161,10 +172,8 @@ public class DriveTrain {
                 while (pinpoint.getEncoderX()>x || pinpoint.getEncoderY()>y){pinpoint.update();System.out.println("going");}
             }
         }
+        **/
 
-
-        setPowerAll(0.0);
-    }
 
     public void moveCoords(double[] currentPos, double[] newPos, double power){
         System.out.println("Move coordsing");
@@ -184,7 +193,7 @@ public class DriveTrain {
         System.out.println("Will move vector");
         boolean xDirection = newPos[0] > currentPos[0];
         boolean yDirection = newPos[1] > currentPos[1];
-        moveVector(movementDistance, movementAngle, power, turnAngle , xDirection, yDirection);
+        moveVector(movementDistance, movementAngle, power, turnAngle);
         System.out.println("Moved Vector");
     }
 
