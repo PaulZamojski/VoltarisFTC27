@@ -3,6 +3,7 @@ This file is for recording what inputs on each controller correspond to which fu
 Controller 1:
     Left Stick: Straight Movement
     Right Stick: Rotation (X-axis only)
+    Right Stick: Speed Multiplier (Y-axis only)
 
     Left Bumper (L2): Field Oriented Driving
     Right Bumper (R2): Robot Oriented Driving

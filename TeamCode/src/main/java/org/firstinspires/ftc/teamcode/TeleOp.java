@@ -24,10 +24,9 @@ public class TeleOp extends LinearOpMode{
 
         //What happens after "play" pressed on CH
         while(opModeIsActive()){
-            //telemetry.addData("Drivetrain Power",robot.driveTrain.getPowerMultiplier());
             telemetry.addData("Field oriented?",fieldOriented);
             telemetry.addData("Parked?",robot.driveTrain.parked);
-            telemetry.addData("Bot Angle:", -robot.driveTrain.getDirection());
+            telemetry.addData("Bot Angle:", -robot.driveTrain.getDirection()+" degrees");
             telemetry.addData("Speed Multiplier:",(0.28125 / (gamepad1.left_trigger + .25)) - .125);
 
             //Driving
@@ -66,7 +65,7 @@ public class TeleOp extends LinearOpMode{
             }
 
 
-            if(gamepad2.leftTriggerWasPressed() && (robot.shooter.getPower()!=0)){
+            if(gamepad2.leftTriggerWasPressed()){
                 robot.shooter.allowBalls();
             }
 

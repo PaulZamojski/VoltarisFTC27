@@ -30,7 +30,7 @@ public class Auto extends LinearOpMode {
     private final Poses STARTING_POSE_D = new Poses(56,9,270);
     private final Poses BOTTOM_HIVE_SHOOTING = new Poses(56, 9, 270);
     private final Poses TOP_HIVE_SHOOTING = new Poses(56,134,0);
-    private final Poses RED_GARDEN_START = new Poses(18,8,180);
+    private final Poses RED_GARDEN_START = new Poses(18,9,180);
     private final Poses RED_BOTTOM_CORNER = new Poses(10,8,180);
     private final Poses RED_FLOWER = new Poses(8,270,270);
     private final Poses PARKED = new Poses(8,105,90);

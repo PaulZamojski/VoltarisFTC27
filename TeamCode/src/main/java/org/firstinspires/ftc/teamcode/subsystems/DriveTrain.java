@@ -32,6 +32,7 @@ public class DriveTrain {
     public DcMotorEx rb;
 
     public final double PI = Math.PI;
+
     
     public DriveTrain(HardwareMap hwMap, GoBildaPinpointDriver pinpoint){
         lf = hwMap.get(DcMotorEx.class,"fl");
@@ -124,10 +125,6 @@ public class DriveTrain {
 
     // Goes straight
     public void moveVector(double inches, double movementAngle, double power, double turnAngle){
-        rf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lf.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         if(turnAngle>180){turnAngle=turnAngle-360;}
         double straight=inches*Math.sin(movementAngle);
@@ -156,15 +153,15 @@ public class DriveTrain {
 
         if (yDirection){
             if (xDirection){
-                while (pinpoint.getEncoderX()<x && pinpoint.getEncoderY()<y){pinpoint.update();System.out.println("going");}
+                while (pinpoint.getEncoderX()<x || pinpoint.getEncoderY()<y){pinpoint.update();System.out.println("going");}
             } else {
-                while (pinpoint.getEncoderX()>x && pinpoint.getEncoderY()<y){pinpoint.update();System.out.println("going");}
+                while (pinpoint.getEncoderX()>x || pinpoint.getEncoderY()<y){pinpoint.update();System.out.println("going");}
             }
         } else {
             if (xDirection){
-                while (pinpoint.getEncoderX()<x && pinpoint.getEncoderY()>y){pinpoint.update();System.out.println("going");}
+                while (pinpoint.getEncoderX()<x || pinpoint.getEncoderY()>y){pinpoint.update();System.out.println("going");}
             } else {
-                while (pinpoint.getEncoderX()>x && pinpoint.getEncoderY()>y){pinpoint.update();System.out.println("going");}
+                while (pinpoint.getEncoderX()>x || pinpoint.getEncoderY()>y){pinpoint.update();System.out.println("going");}
             }
         }
 
@@ -175,7 +172,7 @@ public class DriveTrain {
     public void moveCoords(double[] currentPos, double[] newPos, double power){
         System.out.println("Move coordsing");
 
-        double turnAngle=newPos[2] - currentPos[0];
+        double turnAngle=newPos[2] - currentPos[2];
 
         double x = newPos[0] - currentPos[0];
         double y = newPos[1] - currentPos[1];
