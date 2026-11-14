@@ -17,7 +17,7 @@ public class Shooter {
     Servo shootingGate; //Assumed to be 180 degree servo
 
     public final double SERVO_OPEN = 0.3;
-    public final double SERVO_CLOSED = 0.72;
+    public final double SERVO_CLOSED = 0.777;
 
     public Shooter(HardwareMap hwMap){
         shootingMotor=hwMap.get(DcMotorEx.class,"shooter");

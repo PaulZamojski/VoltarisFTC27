@@ -14,8 +14,8 @@ public class Intake {
     Servo rightIntakeServo;
     DcMotorEx intakeMotor;
 
-    public final double WIPER_OPEN = 0.362;
-    public final double WIPER_CLOSED = 0.950;
+    public final double WIPER_OPEN = 0.335;
+    public final double WIPER_CLOSED = 1.000;
 
     public Intake(HardwareMap hwMap){
         leftIntakeServo=hwMap.get(CRServo.class,"LIS");
