@@ -188,12 +188,12 @@ public class DriveTrain {
         double[] rotatedCoordinates = {x*cos(-heading) - y*sin(-heading), x*sin(-heading) + y*cos(-heading)};
 
         double movementDistance = Math.hypot(x,y);
-        double movementAngle = Math.asin(rotatedCoordinates[1] / movementDistance);
+        double movementAnngle = Math.asin(rotatedCoordinates[1] / movementDistance);
 
         System.out.println("Will move vector");
         boolean xDirection = newPos[0] > currentPos[0];
         boolean yDirection = newPos[1] > currentPos[1];
-        moveVector(movementDistance, movementAngle, power, turnAngle);
+        //moveVector(movementDistance, movementAngle, power, turnAngle);
         System.out.println("Moved Vector");
     }
 
