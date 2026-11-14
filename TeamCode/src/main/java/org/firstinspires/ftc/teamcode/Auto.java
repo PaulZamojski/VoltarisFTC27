@@ -1,5 +1,4 @@
 package org.firstinspires.ftc.teamcode;
-import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.*;
@@ -12,7 +11,6 @@ import org.firstinspires.ftc.teamcode.variables.Constants;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.variables.RobotVariables;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.pedropathing.follower.Follower;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -46,7 +44,7 @@ public class Auto extends LinearOpMode {
         if (bottomHiveStart) {
 
             moveCoords(STARTING_POSE_D.getPos(), BOTTOM_HIVE_SHOOTING.getPos(), .5);
-            int SHOOTING_VELOCITY = 1825;
+            int SHOOTING_VELOCITY = 1815;
             robot.shooter.runShootingSequence(SHOOTING_VELOCITY);
 
             moveCoords(BOTTOM_HIVE_SHOOTING.getPos(), RED_GARDEN_START.getPos(), .5);
@@ -56,13 +54,6 @@ public class Auto extends LinearOpMode {
             robot.intake.setIntakePower(0);
 
             moveCoords(RED_BOTTOM_CORNER.getPos(), BOTTOM_HIVE_SHOOTING.getPos(), 1);
-            robot.shooter.runShootingSequence(SHOOTING_VELOCITY);
-
-            moveCoords(BOTTOM_HIVE_SHOOTING.getPos(), RED_FLOWER.getPos(), .5);
-            robot.intake.setIntakePower(1);
-            sleep(2000);
-
-            moveCoords(RED_FLOWER.getPos(), BOTTOM_HIVE_SHOOTING.getPos(), .5);
             robot.shooter.runShootingSequence(SHOOTING_VELOCITY);
 
             moveCoords(BOTTOM_HIVE_SHOOTING.getPos(), PARKED.getPos(), .5);

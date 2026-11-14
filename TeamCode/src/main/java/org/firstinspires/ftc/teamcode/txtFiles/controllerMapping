@@ -24,5 +24,7 @@ Controller 2:
     Right Bumper (R1): Stop Shooter Motor
     Left Trigger (L2): Shoot 1 Ball
 
+    Dpad Up: Reset Shooter Velocity to 1815
+
     Back: Wiper Closed
     Start: Wiper Open

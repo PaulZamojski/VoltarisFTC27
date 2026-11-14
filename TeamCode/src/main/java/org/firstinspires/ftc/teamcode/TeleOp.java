@@ -10,7 +10,7 @@ public class TeleOp extends LinearOpMode{
     //Vars
     boolean fieldOriented=false;
 
-    double shootingVelocity = 1825;
+    double shootingVelocity = 1815;
 
     boolean shooting=false;
 
@@ -64,6 +64,10 @@ public class TeleOp extends LinearOpMode{
                 if (shooting){robot.shooter.setShooterVelocity(shootingVelocity);}
             }
 
+            if (gamepad2.dpad_up){
+                shootingVelocity=1815;
+            }
+
 
             if(gamepad2.leftTriggerWasPressed()){
                 robot.shooter.allowBalls();
@@ -83,6 +87,8 @@ public class TeleOp extends LinearOpMode{
             } else if (gamepad2.yWasPressed()){
                 robot.intake.setIntakePower(-1);
             }
+
+
 
         }
     }

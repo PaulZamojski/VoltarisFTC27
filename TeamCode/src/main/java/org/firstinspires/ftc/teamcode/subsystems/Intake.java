@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.variables.RobotVariables;
 public class Intake {
     CRServo leftIntakeServo;
     Servo rightIntakeServo;
-
     DcMotorEx intakeMotor;
 
     public final double WIPER_OPEN = 0.362;

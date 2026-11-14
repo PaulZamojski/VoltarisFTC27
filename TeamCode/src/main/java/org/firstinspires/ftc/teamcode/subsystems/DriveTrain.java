@@ -124,7 +124,7 @@ public class DriveTrain {
     }
 
     // Goes straight
-    public void moveVector(double inches, double movementAngle, double power, double turnAngle){
+    public void moveVector(double inches, double movementAngle, double power, double turnAngle, boolean xDirection, boolean yDirection){
 
         if(turnAngle>180){turnAngle=turnAngle-360;}
         double straight=inches*Math.sin(movementAngle);
@@ -138,9 +138,6 @@ public class DriveTrain {
         double x = pinpoint.getEncoderX();
         double y = pinpoint.getEncoderY();
 
-
-        boolean yDirection = (((pinpoint.getHeading(AngleUnit.RADIANS) - movementAngle - PI/2) % 2*PI) < PI);
-        boolean xDirection = (Math.abs(((pinpoint.getHeading(AngleUnit.RADIANS) - movementAngle - PI/2) % 2*PI)-PI) < PI/2);
 
         System.out.println("Movement angle: "+movementAngle+"X: "+xDirection+"Y: "+yDirection);
         setPower(
@@ -185,7 +182,9 @@ public class DriveTrain {
         double movementAngle = Math.asin(rotatedCoordinates[1] / movementDistance);
 
         System.out.println("Will move vector");
-        moveVector(movementDistance, movementAngle, power, turnAngle);
+        boolean xDirection = newPos[0] > currentPos[0];
+        boolean yDirection = newPos[1] > currentPos[1];
+        moveVector(movementDistance, movementAngle, power, turnAngle , xDirection, yDirection);
         System.out.println("Moved Vector");
     }
 
