@@ -16,6 +16,8 @@ import org.firstinspires.ftc.teamcode.pedro.procedures.PinpointTuner;
 import org.firstinspires.ftc.teamcode.variables.Constants;
 import org.firstinspires.ftc.teamcode.variables.RobotVariables;
 
+import java.security.PublicKey;
+
 public class DriveTrain {
     //Technical Stuff
     GoBildaPinpointDriver pinpoint;
@@ -29,8 +31,8 @@ public class DriveTrain {
     public DcMotorEx lb;
     public DcMotorEx rb;
 
-    public double powerMultiplier=1.0;
-
+    public final double PI = Math.PI;
+    
     public DriveTrain(HardwareMap hwMap, GoBildaPinpointDriver pinpoint){
         lf = hwMap.get(DcMotorEx.class,"fl");
         lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -50,30 +52,26 @@ public class DriveTrain {
         parked = true;
 
         this.pinpoint = pinpoint;
-
-        powerMultiplier=1.0;
     }
 
 
     public void setPower(double fr, double br, double fl, double bl){
         if(parked)return;
 
-        this.rf.setPower(fr*powerMultiplier);
-        this.rb.setPower(br*powerMultiplier);
-        this.lb.setPower(-bl*powerMultiplier);
-        this.lf.setPower(-fl*powerMultiplier);
+        this.rf.setPower(fr);
+        this.rb.setPower(br);
+        this.lb.setPower(-bl);
+        this.lf.setPower(-fl);
     }
     public void setPowerAll(double power){
         if(parked){return;}
 
-        rf.setPower(power*powerMultiplier);
-        rb.setPower(power*powerMultiplier);
-        lb.setPower(power*powerMultiplier);
-        lf.setPower(power*powerMultiplier);
+        rf.setPower(power);
+        rb.setPower(power);
+        lb.setPower(power);
+        lf.setPower(power);
     }
 
-    public void setPowerMultiplier(double multiplier){this.powerMultiplier=multiplier;}
-    public double getPowerMultiplier(){return this.powerMultiplier;}
 
     public static double sin(double degrees) {return Math.sin(degrees);}
     public static double cos(double degrees) {return Math.cos(degrees);}
@@ -86,13 +84,15 @@ public class DriveTrain {
         pinpoint.update();
         return pinpoint.getHeading(UnnormalizedAngleUnit.DEGREES);
     }
-    public void move(Gamepad gamepad1, boolean fieldOriented){
+    public void move(Gamepad gamepad1, boolean fieldOriented, float trigger){
+        double multiplier = (0.28125 / (trigger + .25)) - .125;
+        if (multiplier > 1){multiplier = 1;}
+
         if(parked){return;}
 
         double y = -gamepad1.left_stick_y; //Y stick value is reversed
         double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
-
 
         if (gamepad1.start) {
             pinpoint.resetPosAndIMU();
@@ -113,10 +113,10 @@ public class DriveTrain {
         // Denominator is the largest motor power (absolute value) or 1
         // This ensures all the powers maintain the same ratio
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-        double frontLeftPower = (y + x + rx) / denominator;
-        double backLeftPower = (y - x + rx) / denominator;
-        double frontRightPower = (y - x -  rx) / denominator;
-        double backRightPower = (y + x - rx) / denominator;
+        double frontLeftPower = multiplier * (y + x + rx) / denominator;
+        double backLeftPower = multiplier * (y - x + rx) / denominator;
+        double frontRightPower = multiplier * (y - x -  rx) / denominator;
+        double backRightPower = multiplier * (y + x - rx) / denominator;
 
 
         setPower(frontRightPower, backRightPower, frontLeftPower, backLeftPower);
@@ -132,7 +132,7 @@ public class DriveTrain {
         if(turnAngle>180){turnAngle=turnAngle-360;}
         double straight=inches*Math.sin(movementAngle);
         double strafe=inches*Math.cos(movementAngle);
-        double turnDistance=turnAngle/360.0*2*Math.PI*RobotVariables.WHEEL_DISTANCE_FROM_CENTER;
+        double turnDistance=turnAngle/360.0*2*PI*RobotVariables.WHEEL_DISTANCE_FROM_CENTER;
 
 
         double max=Math.max(Math.max(straight + strafe + turnDistance, straight - strafe + turnDistance), Math.max(straight - strafe - turnDistance, straight + strafe - turnDistance));
@@ -141,27 +141,30 @@ public class DriveTrain {
         double x = pinpoint.getEncoderX();
         double y = pinpoint.getEncoderY();
 
-        boolean yDirection = (((pinpoint.getHeading(AngleUnit.RADIANS) + movementAngle) % 2*Math.PI) < Math.PI);
-        boolean xDirection = (Math.abs(((pinpoint.getHeading(AngleUnit.RADIANS) + movementAngle) % 2*Math.PI)-Math.PI) < Math.PI/2);
 
+        boolean yDirection = (((pinpoint.getHeading(AngleUnit.RADIANS) - movementAngle - PI/2) % 2*PI) < PI);
+        boolean xDirection = (Math.abs(((pinpoint.getHeading(AngleUnit.RADIANS) - movementAngle - PI/2) % 2*PI)-PI) < PI/2);
+
+        System.out.println("Movement angle: "+movementAngle+"X: "+xDirection+"Y: "+yDirection);
         setPower(
                 power * (straight-strafe-turnDistance) / max,
                 power * (straight+strafe-turnDistance) / max,
                 power * (straight+strafe+turnDistance) / max,
                 power * (straight-strafe+turnDistance) / max);
+        System.out.println("Set powers: "+power*(straight-strafe-turnDistance)/max);
 
 
         if (yDirection){
             if (xDirection){
-                while (pinpoint.getEncoderX()<x && pinpoint.getEncoderY()<y){pinpoint.update();}
+                while (pinpoint.getEncoderX()<x && pinpoint.getEncoderY()<y){pinpoint.update();System.out.println("going");}
             } else {
-                while (pinpoint.getEncoderX()>x && pinpoint.getEncoderY()<y){pinpoint.update();}
+                while (pinpoint.getEncoderX()>x && pinpoint.getEncoderY()<y){pinpoint.update();System.out.println("going");}
             }
         } else {
             if (xDirection){
-                while (pinpoint.getEncoderX()<x && pinpoint.getEncoderY()>y){pinpoint.update();}
+                while (pinpoint.getEncoderX()<x && pinpoint.getEncoderY()>y){pinpoint.update();System.out.println("going");}
             } else {
-                while (pinpoint.getEncoderX()>x && pinpoint.getEncoderY()>y){pinpoint.update();}
+                while (pinpoint.getEncoderX()>x && pinpoint.getEncoderY()>y){pinpoint.update();System.out.println("going");}
             }
         }
 
@@ -170,6 +173,7 @@ public class DriveTrain {
     }
 
     public void moveCoords(double[] currentPos, double[] newPos, double power){
+        System.out.println("Move coordsing");
 
         double turnAngle=newPos[2] - currentPos[0];
 
@@ -183,7 +187,9 @@ public class DriveTrain {
         double movementDistance = Math.hypot(x,y);
         double movementAngle = Math.asin(rotatedCoordinates[1] / movementDistance);
 
+        System.out.println("Will move vector");
         moveVector(movementDistance, movementAngle, power, turnAngle);
+        System.out.println("Moved Vector");
     }
 
 

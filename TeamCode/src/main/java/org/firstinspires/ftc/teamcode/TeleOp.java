@@ -10,7 +10,7 @@ public class TeleOp extends LinearOpMode{
     //Vars
     boolean fieldOriented=false;
 
-    double shootingVelocity = 1860;
+    double shootingVelocity = 1825;
 
     boolean shooting=false;
 
@@ -28,33 +28,21 @@ public class TeleOp extends LinearOpMode{
             telemetry.addData("Field oriented?",fieldOriented);
             telemetry.addData("Parked?",robot.driveTrain.parked);
             telemetry.addData("Bot Angle:", -robot.driveTrain.getDirection());
+            telemetry.addData("Speed Multiplier:",(0.28125 / (gamepad1.left_trigger + .25)) - .125);
 
             //Driving
-            robot.driveTrain.move(gamepad1, fieldOriented);
+            robot.driveTrain.move(gamepad1, fieldOriented, gamepad1.left_trigger);
 
             if(gamepad1.backWasPressed()){
                 robot.driveTrain.parked=!robot.driveTrain.parked;
             }
-            if(gamepad1.leftTriggerWasPressed()){
+            if(gamepad1.leftBumperWasPressed()){
                 fieldOriented=true;
-            } else if (gamepad1.rightTriggerWasPressed()){
+            } else if (gamepad1.rightBumperWasPressed()){
                 fieldOriented=false;
             }
 
 
-            /*** if (Math.abs(gamepad1.right_stick_y)>=.5) {
-                robot.driveTrain.powerMultiplier -= gamepad1.left_stick_y * 0.1;//Value tbd
-                if (robot.driveTrain.getPowerMultiplier() > 1.0) {
-                    robot.driveTrain.powerMultiplier=1.0;
-                }
-            }
-            if(robot.driveTrain.getPowerMultiplier()<=.3){
-                robot.driveTrain.setPowerMultiplier(.3);
-            }
-            if (gamepad1.y){
-                robot.driveTrain.setPowerMultiplier(1.0);
-            }
-             **/
 
             //Controller 2
             telemetry.addData("\n\n\n","\n\n\n");
@@ -73,13 +61,20 @@ public class TeleOp extends LinearOpMode{
                 shooting=false;
             }
             if (Math.abs(gamepad2.left_stick_y) >= .3){
-                shootingVelocity-=1*gamepad2.left_stick_y;
+                shootingVelocity-=.2*gamepad2.left_stick_y;
                 if (shooting){robot.shooter.setShooterVelocity(shootingVelocity);}
             }
 
 
             if(gamepad2.leftTriggerWasPressed() && (robot.shooter.getPower()!=0)){
                 robot.shooter.allowBalls();
+            }
+
+            if (gamepad2.startWasPressed()){
+                robot.intake.setWiperPos(robot.intake.WIPER_OPEN);
+            } else if (gamepad2.backWasPressed()){
+                robot.intake.setWiperPos(robot.intake.WIPER_CLOSED);
+
             }
 
             if (gamepad2.aWasPressed()){

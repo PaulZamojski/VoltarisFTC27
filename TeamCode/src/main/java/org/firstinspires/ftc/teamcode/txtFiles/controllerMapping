@@ -4,10 +4,12 @@ Controller 1:
     Left Stick: Straight Movement
     Right Stick: Rotation (X-axis only)
 
-    Left Trigger (L2): Field Oriented Driving
-    Right Trigger (R2): Robot Oriented Driving
+    Left Bumper (L2): Field Oriented Driving
+    Right Bumper (R2): Robot Oriented Driving
 
-    Start: Recalibrate Rotation
+    Left Trigger: Power Multiplier
+
+    Start: Recalibrate Pos
     Back: Toggle Park
 
 Controller 2:
@@ -19,5 +21,7 @@ Controller 2:
 
     Left Bumper (L1): Start Shooter Motor
     Right Bumper (R1): Stop Shooter Motor
-    Left Trigger (L2): Open Shooting Servo
-    Right Trigger (R2): Close Shooting Servo
+    Left Trigger (L2): Shoot 1 Ball
+
+    Back: Wiper Closed
+    Start: Wiper Open

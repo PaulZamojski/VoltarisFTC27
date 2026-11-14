@@ -10,10 +10,10 @@ TeleOp.java (Class)
 
         Intake.jave (Class)
 
-        position tracking (rotational only so far)
+        position tracking
 
 Auto.java (Class)
     Robot.java (Same as above)
 
     Manually coded auto
-    Auto loop (not dome)
+    Auto loop (not now yet)

@@ -11,13 +11,16 @@ import org.firstinspires.ftc.teamcode.variables.RobotVariables;
 
 public class Intake {
     CRServo leftIntakeServo;
-   CRServo rightIntakeServo;
+    Servo rightIntakeServo;
 
     DcMotorEx intakeMotor;
 
+    public final double WIPER_OPEN = 0.362;
+    public final double WIPER_CLOSED = 0.950;
+
     public Intake(HardwareMap hwMap){
         leftIntakeServo=hwMap.get(CRServo.class,"LIS");
-        rightIntakeServo=hwMap.get(CRServo.class,"RIS");
+        rightIntakeServo=hwMap.get(Servo.class,"RIS");
 
         intakeMotor=hwMap.get(DcMotorEx.class, "intake");
         intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -28,15 +31,17 @@ public class Intake {
     public double inchesToTicks(double inches){return inches*(Constants.TICKS_PER_REVOLUTION / RobotVariables.WHEEL_CIRCUMFERENCE);}
 
     public void setIntakePower (double power) {
-        intakeMotor.setPower(power);
-        power=(power+1.0)/2.0;
-        setServosPower(power, power);
+        intakeMotor.setPower(1*power);
+        setServosPower(-power);
     }
     public double getIntakePower() {return intakeMotor.getPower();}
 
-    public void setServosPower(double powerL, double powerR){
-        leftIntakeServo.setPower(1-powerL);
-        rightIntakeServo.setPower(powerR);
+    public void setServosPower(double powerL){
+        leftIntakeServo.setPower(powerL);
+    }
+
+    public void setWiperPos(double pos){
+        rightIntakeServo.setPosition(pos);
     }
 
 }
